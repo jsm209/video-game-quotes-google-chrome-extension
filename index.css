@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css?family=Economica|Marvel');
+
+body {
+  background-color: black;
+}
+
+h1 {
+  font-family: "Marvel", sans-serif;
+  color: white;
+  text-align: center;
+  font-size: 48px;
+}
+
+footer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+p {
+  font-family: "Economica", sans-serif;
+  color: white;
+  text-align: center;
+  font-size: 20px;
+}
+
+#quote {
+  font-style: italic;
+}
