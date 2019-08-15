@@ -1,24 +1,43 @@
 @import url('https://fonts.googleapis.com/css?family=Economica|Marvel');
+@import url('https://fonts.googleapis.com/css?family=Oswald:200&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300&display=swap');
 
 body {
   background-color: black;
+  background-repeat: no-repeat;
+  background-size: cover;
+  margin-left: 15%;
+  margin-right: 15%;
+
+  font-family: "Oswald", sans-serif;
 }
 
 h1 {
-  font-family: "Marvel", sans-serif;
   color: white;
-  text-align: center;
-  font-size: 48px;
+  text-align: left;
+  font-size: 36px;
 }
 
-footer {
+h2 {
+  color: white;
+  text-align: left;
+  font-size: 24px;
+}
+
+h3 {
+  color: white;
+  font-size: 24px;
+}
+
+main {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  margin-left: 10%;
+  margin-right: 10%;
 }
 
 p {
-  font-family: "Economica", sans-serif;
   color: white;
   text-align: center;
   font-size: 20px;

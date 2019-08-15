@@ -13,6 +13,7 @@
 
   // An array of quotes where the first index is the source game, and second index is the quote.
   let quotes = [
+
     ["Crazy Taxi", "Hey hey hey it’s time to make some carrrrazzzyyy money are ya ready? Here we go! - Taxi Driver"],
     ["Half-Life 2", "The right man in the wrong place can make all the difference in the world. - G-Man"],
     ["Borderlands 2", "Nothing is more badass than treating a woman with respect. – Mr. Torgue"],
@@ -30,17 +31,20 @@
     ["Red Dead Redemption", "Some trees flourish, others die. Some cattle grow strong, others are taken by wolves. Some men are born rich enough and dumb enough to enjoy their lives. Ain’t nothing fair. - John Marston"],
     ["Far Cry 2", "You can’t break a man the way you break a dog, or a horse. The harder you beat a man, the taller he stands."],
     ["Duke Nukem 3D", "It's time to kick ass and chew bubblegum... and I'm all outta gum. - Duke Nukem"],
-    ["Alan Wake", "If our lives are already written, it would take a courageous man to change the script. - Alan Wake"]
+    ["Alan Wake", "If our lives are already written, it would take a courageous man to change the script. - Alan Wake"],
+    ["Pac-Man", "Wakka wakka wakka. - Pac-Man"],
+    ["Fallout", "War, war never changes. - Narrator"],
+    ["Super Mario Bros", "Thank You Mario! But our princess is in another castle! - Toad"],
+    ["Mortal Kombat", "Get over here! - Scorpion"],
+    ["Dark Souls 3", "I may be but small, but I will die a colossus. - Ludleth of Courland"],
+    ["Dark Souls Series", "AAAAAAAARRRRGGGHH! - Protagonist Dying"]
 
   ];
 
-/*
-Unused Quotes:
-    ["Pac-Man", "Wakka wakka wakka."],
-    ["Fallout", "War, war never changes."],
-    ["Super Mario Bros", "Thank You Mario! But our princess is in another castle!"],
-    ["Mortal Kombat", "Get over here!"],
-*/
+  let titles = ["Commander", "Hero", "Combatant", "Witcher", "Builder", "Chosen One", "Infected", "Templar", "Warden", "Guardian", "Dovahkiin",
+  "Chosen Undead", "Dreamer", "Outlaw", "Shepard", "Trainer"];
+
+  let weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
   window.addEventListener("load", initialize);
 
@@ -48,15 +52,29 @@ Unused Quotes:
    *  CHANGE: Describe what your initialize function does here.
    */
   function initialize() {
+  	// Sets the time and the weekday
     startTime();
-    let quote = getRandomQuote(quotes);
+    $("weekday").innerText = getDayOfWeek();
+
+    // Retrieve and display random quote
+    let quote = getRandomFromArray(quotes);
     $("game").innerText = quote[0];
     $("quote").innerText = quote[1];
+
+    // Retrieve and display random title
+    let title = getRandomFromArray(titles);
+    $("title").innerText = "Welcome back, " + title;
+
+    // Retrieve and display random background image
+    //console.log("url(backgrounds/" (Math.floor(Math.random()) * 7) + 1 + ".png)");
+    document.body.style.backgroundImage = "url('backgrounds/" + (Math.round(Math.random() * 6)) + ".png')";
+
+    getLocation();
   }
 
-  function getRandomQuote(quoteBank) {
-    let index = Math.floor(Math.random() * quoteBank.length);
-    return quoteBank[index];
+  function getRandomFromArray(array) {
+    let index = Math.floor(Math.random() * array.length);
+    return array[index];
   }
 
   function startTime() {
@@ -92,6 +110,43 @@ Unused Quotes:
     return h;
   }
 
+  function getLocation() {
+  	if (navigator.geolocation) {
+  		navigator.geolocation.getCurrentPosition(showWeather, getLocationError);
+  	} else {
+  		$("weather_feedback").innerText = "Geolocation is not supported by this browser."
+  	}
+  }
+
+  function showWeather(position) {
+  	let lat = position.coords.latitude;
+  	let lng = position.coords.longitude;
+
+  	fetch("https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=" + lat + "&lon=" + lng)
+  		.then(checkStatus)
+  		.then(JSON.parse)
+  		.then(function(response) {
+  			let city = response.address.city;
+  			postscribe("#weather", "<script type='text/javascript' src='https://darksky.net/widget/default/" + lat + "," + lng + "/us12/en.js?width=100%&height=250&title=" + "Local Weather In " + city + "&textColor=ffffff&bgColor=transparent&transparency=true&skyColor=undefined&fontFamily=Sans-Serif&customFont=&units=us&htColor=ffffff&ltColor=ffffff&displaySum=yes&displayHeader=yes'></script>");
+  		})
+  		.catch(console.log);
+
+  	
+
+  }
+
+  function getLocationError(err) {
+  	if(err.code == 1) {
+    	$("weather_feedback").innerText = "Error: Access is denied!";
+  	} else if( err.code == 2) {
+   		$("weather_feedback").innerText = "Error: Position is unavailable!";
+    }  				
+  }
+
+  function getDayOfWeek() {
+  	let today = new Date();
+  	return weekdays[today.getDay()];
+  }
   /* ------------------------------ Helper Functions  ------------------------------ */
   // Note: You may use these in your code, but do remember that your code should not have
   // any functions defined that are unused.
@@ -122,5 +177,20 @@ Unused Quotes:
   function qsa(query) {
     return document.querySelectorAll(query);
   }
+
+	/*
+	 * Helper function to return the response's result text if successful, otherwise
+	 * returns the rejected Promise result with an error status and corresponding text
+	 * @param {object} response - response to check for success/error
+	 * @returns {object} - valid result text if response was successful, otherwise rejected
+	 *                     Promise result
+	 */
+	function checkStatus(response) {
+		if (response.status >= 200 && response.status < 300 || response.status == 0) {
+			return response.text();
+		} else {
+			return Promise.reject(new Error(response.status + ": " + response.statusText));
+		}
+	}
 
 })();
